@@ -6,7 +6,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 const Reset = ({ match }) => {
-    // props.match from react router dom
     const [values, setValues] = useState({
         name: '',
         token: '',
@@ -17,11 +16,10 @@ const Reset = ({ match }) => {
     useEffect(() => {
         let token = match.params.token;
         let { name } = jwt.decode(token);
-        // console.log(name);
         if (token) {
             setValues({ ...values, name, token });
         }
-    }, []);
+    }, [match.params.token]);
 
     const { name, token, newPassword, buttonText } = values;
 
