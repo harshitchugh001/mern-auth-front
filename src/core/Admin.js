@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from '../core/Layout';
 import axios from 'axios';
 import { isAuth, getCookie, signout, updateUser } from '../auth/helpers';
@@ -17,11 +16,7 @@ const Admin = ({ history }) => {
 
     const token = getCookie('token');
 
-    useEffect(() => {
-        loadProfile();
-    }, []);
-
-    const loadProfile = () => {
+    const loadProfile = useCallback(() => {
         axios({
             method: 'GET',
             url: `${process.env.REACT_APP_API}/user/${isAuth()._id}`,
@@ -42,7 +37,11 @@ const Admin = ({ history }) => {
                     });
                 }
             });
-    };
+    }, [history, token, values]);
+
+    useEffect(() => {
+        loadProfile();
+    }, [loadProfile]);
 
     const { role, name, email, password, buttonText } = values;
 

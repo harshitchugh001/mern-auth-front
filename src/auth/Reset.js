@@ -17,9 +17,9 @@ const Reset = ({ match }) => {
         let token = match.params.token;
         let { name } = jwt.decode(token);
         if (token) {
-            setValues({ ...values, name, token });
+            setValues(prevValues => ({ ...prevValues, name, token }));
         }
-    }, [match.params.token]);
+    }, [match.params.token, values]);
 
     const { name, token, newPassword, buttonText } = values;
 
@@ -38,12 +38,12 @@ const Reset = ({ match }) => {
             .then(response => {
                 console.log('RESET PASSWORD SUCCESS', response);
                 toast.success(response.data.message);
-                setValues({ ...values, buttonText: 'Done' });
+                setValues(prevValues => ({ ...prevValues, buttonText: 'Done' }));
             })
             .catch(error => {
                 console.log('RESET PASSWORD ERROR', error.response.data);
                 toast.error(error.response.data.error);
-                setValues({ ...values, buttonText: 'Reset password' });
+                setValues(prevValues => ({ ...prevValues, buttonText: 'Reset password' }));
             });
     };
 

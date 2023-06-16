@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Redirect } from 'react-router-dom';
 import Layout from '../core/Layout';
 import axios from 'axios';
 import { isAuth, getCookie, signout, updateUser } from '../auth/helpers';
@@ -18,36 +17,35 @@ const Private = ({ history }) => {
     const token = getCookie('token');
 
     useEffect(() => {
-        loadProfile();
-    }, []);
-
-    const loadProfile = () => {
-        axios({
-            method: 'GET',
-            url: `${process.env.REACT_APP_API}/user/${isAuth()._id}`,
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        })
-            .then(response => {
-                console.log('PRIVATE PROFILE UPDATE', response);
-                const { role, name, email } = response.data;
-                setValues({ ...values, role, name, email });
-            })
-            .catch(error => {
-                console.log('PRIVATE PROFILE UPDATE ERROR', error.response.data.error);
-                if (error.response.status === 401) {
-                    signout(() => {
-                        history.push('/');
-                    });
+        const loadProfile = () => {
+            axios({
+                method: 'GET',
+                url: `${process.env.REACT_APP_API}/user/${isAuth()._id}`,
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
-            });
-    };
+            })
+                .then(response => {
+                    console.log('PRIVATE PROFILE UPDATE', response);
+                    const { role, name, email } = response.data;
+                    setValues({ ...values, role, name, email });
+                })
+                .catch(error => {
+                    console.log('PRIVATE PROFILE UPDATE ERROR', error.response.data.error);
+                    if (error.response.status === 401) {
+                        signout(() => {
+                            history.push('/');
+                        });
+                    }
+                });
+        };
+
+        loadProfile();
+    }, [token, history, values]);
 
     const { role, name, email, password, buttonText } = values;
 
     const handleChange = name => event => {
-        // console.log(event.target.value);
         setValues({ ...values, [name]: event.target.value });
     };
 
